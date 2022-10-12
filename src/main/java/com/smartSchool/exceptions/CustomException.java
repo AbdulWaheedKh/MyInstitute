@@ -1,4 +1,4 @@
-package com.myinstitute.exceptions;
+package com.smartSchool.exceptions;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

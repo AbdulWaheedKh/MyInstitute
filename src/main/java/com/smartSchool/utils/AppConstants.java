@@ -1,4 +1,4 @@
-package com.myinstitute.utils;
+package com.smartSchool.utils;
 
 public class AppConstants {
 }

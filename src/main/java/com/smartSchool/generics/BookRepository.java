@@ -1,4 +1,4 @@
-package com.myinstitute.generics;
+package com.smartSchool.generics;
 
 public interface BookRepository extends GenericRepository<Book> {
 }

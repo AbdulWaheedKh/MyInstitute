@@ -1,4 +1,4 @@
-package com.myinstitute.controller;
+package com.smartSchool.controller;
 
 public class AcademicYearController {
 }

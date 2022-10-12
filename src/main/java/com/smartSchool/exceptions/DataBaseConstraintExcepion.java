@@ -1,6 +1,6 @@
-package com.myinstitute.exceptions;
+package com.smartSchool.exceptions;
 
-import com.myinstitute.utils.AppUtility;
+import com.smartSchool.utils.AppUtility;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 

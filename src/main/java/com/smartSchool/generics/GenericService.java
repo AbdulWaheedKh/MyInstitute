@@ -1,6 +1,5 @@
-package com.myinstitute.generics;
+package com.smartSchool.generics;
 
-import org.hibernate.annotations.NotFound;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

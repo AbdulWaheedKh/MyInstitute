@@ -1,4 +1,4 @@
-package com.myinstitute.generics;
+package com.smartSchool.generics;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
