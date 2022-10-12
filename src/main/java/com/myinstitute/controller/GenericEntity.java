@@ -7,6 +7,7 @@ public interface GenericEntity<T extends GenericEntity> {
 
     Long getId();
 
+
     // based on current data create new instance with new id
     T createNewInstance();
 }

@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,8 +17,19 @@ public abstract class genericController<T extends GenericEntity<T>>{
     @Autowired
     GenericRepository genericRepository;
 
+//    @PostMapping("")
+//    public ResponseEntity<T> create(@RequestBody T created){
+//        return ResponseEntity.ok(genericRepository.save(created));
+//    }
 
-    @PostMapping("/")
+//    @Transactional
+//    @PostMapping("/create")
+//    public T create(T newDomain){
+//        T dbDomain = newDomain.createNewInstance();
+//        return (T) genericRepository.save(dbDomain);
+//    }
+
+    @PostMapping("/create")
     public ResponseEntity<T> create(@RequestBody T t) {
         ResponseEntity<T> result;
         try {
@@ -28,6 +40,22 @@ public abstract class genericController<T extends GenericEntity<T>>{
         }
         return result;
     }
+
+//    @PostMapping("/")
+//    @Transactional
+//    public ResponseEntity<T> create(@RequestBody T newDomain) {
+//        ResponseEntity<T> result;
+//        try {
+//            T dbDomain = newDomain.createNewInstance();
+//
+//            T genericObj = (T) genericRepository.save(dbDomain);
+//            result = new ResponseEntity<>(genericObj, HttpStatus.CREATED);
+//        } catch (Exception e) {
+//            result = new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//        return result;
+//    }
+
 
     @GetMapping("/institute/{id}")
     public ResponseEntity<T> getById(@PathVariable("id") Long id) {
