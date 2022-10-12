@@ -8,17 +8,24 @@ import com.myinstitute.repository.DiscountTypeRepository;
 import com.myinstitute.utils.AppConstants;
 import com.myinstitute.utils.AppUtility;
 import com.myinstitute.utils.DataBaseConstrainst;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/discountTypesController")
 public class discountTypeController {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     DiscountTypeRepository discountTypeRepo;
@@ -37,12 +44,14 @@ public class discountTypeController {
         try {
             DiscountType discountTypeObj = discountTypeRepo.save(discountType);
             result = new ResponseEntity<>(discountTypeObj, HttpStatus.CREATED);
-        } catch (Exception e) {
-            DataBaseConstraintExcepion.DBConstraint(e, DataBaseConstrainst.UNIQ, discountType.getName());
-            throw new CustomException(DataBaseConstrainst.UNIQ);
-
-   //         result = new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-   //           result = new ResponseEntity<>(null, DataBaseConstrainst.DISCOUNT_TYPE_UNIQ);
+        }
+        catch (DataIntegrityViolationException e) {
+            logger.error( "----- Discount Type Post -> " +DataBaseConstrainst.UNIQ);
+            throw new RuntimeException(DataBaseConstrainst.UNIQ);
+        }
+        catch (Exception e){
+            logger.error( "-----  Discount Type Post SERVER ERROR ---- ");
+            result = new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return result;
     }
