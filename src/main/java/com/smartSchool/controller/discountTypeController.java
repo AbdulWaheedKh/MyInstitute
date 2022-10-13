@@ -4,7 +4,6 @@ package com.smartSchool.controller;
 import com.smartSchool.exceptions.CustomException;
 import com.smartSchool.models.DiscountType;
 import com.smartSchool.repository.DiscountTypeRepository;
-import com.smartSchool.repository.GenericRepository;
 import com.smartSchool.utils.AppUtility;
 import com.smartSchool.utils.DataBaseConstrainst;
 import org.slf4j.Logger;
@@ -14,8 +13,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -26,24 +23,27 @@ public class discountTypeController {
 
     @Autowired
     DiscountTypeRepository discountTypeRepo;
-    @Autowired
-    GenericRepository genericRepository;
+
+    /*************************************************************************************
+     *                       CRUD FOR DISCOUNT TYPES                                     *
+     *                         13 OCT 2022                                               *
+     * ********************************************************************************** /
 
 
     /**
-     * @param discountType
+     * @param obj
      * @return
      */
     @PostMapping("/")
-    public ResponseEntity<DiscountType> createDiscountType(@RequestBody DiscountType discountType) throws CustomException {
+    public ResponseEntity<DiscountType> createDiscountType(@RequestBody DiscountType obj) throws CustomException {
         ResponseEntity<DiscountType> result;
-        if(!AppUtility.isEmptyOrNull(discountType.getId())){
+        if(!AppUtility.isEmptyOrNull(obj.getId())){
             throw new CustomException("ID MUST BE NULL");
         }
         try {
-            discountType.setCreatedDate(AppUtility.getCurrentTimeStamp());
-            discountType.setModifiedDate(AppUtility.getCurrentTimeStamp());
-            DiscountType discountTypeObj = discountTypeRepo.save(discountType);
+            obj.setCreatedDate(AppUtility.getCurrentTimeStamp());
+            obj.setModifiedDate(AppUtility.getCurrentTimeStamp());
+            DiscountType discountTypeObj = discountTypeRepo.save(obj);
             result = new ResponseEntity<>(discountTypeObj, HttpStatus.CREATED);
         }
         catch (DataIntegrityViolationException e) {
@@ -58,16 +58,16 @@ public class discountTypeController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<DiscountType> updateDiscountType(@RequestBody DiscountType discountType)
+    public ResponseEntity<DiscountType> updateDiscountType(@RequestBody DiscountType obj)
             throws CustomException {
-        if (AppUtility.isEmptyOrNull(discountType.getId())) {
+        if (AppUtility.isEmptyOrNull(obj.getId())) {
             throw new CustomException("Id Can not be null");
-        } else if (AppUtility.isEmptyOrNull(discountType.getName()) || AppUtility.isEmptyOrNull(discountType.getInstituteId())) {
-
+        } else if (AppUtility.isEmptyOrNull(obj.getName()) || AppUtility.isEmptyOrNull(obj.getInstituteId())) {
+            throw  new CustomException("Mandatory Fields are Empty");
         } else {
             try {
-                discountType.setModifiedDate(AppUtility.getCurrentTimeStamp());
-                discountType = discountTypeRepo.save(discountType);
+                obj.setModifiedDate(AppUtility.getCurrentTimeStamp());
+                obj = discountTypeRepo.save(obj);
             }
             catch (DataIntegrityViolationException e) {
                 logger.error( "----- Discount Type put -> " +DataBaseConstrainst.UNIQ);
@@ -77,7 +77,7 @@ public class discountTypeController {
                 new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-            return ResponseEntity.ok(discountType);
+            return ResponseEntity.ok(obj);
     }
 
     /**
@@ -87,10 +87,10 @@ public class discountTypeController {
     @GetMapping("/{id}")
     public ResponseEntity<DiscountType> getDiscountTypeById(@PathVariable("id") Long id) {
         ResponseEntity<DiscountType> result;
-        Optional<DiscountType> discountType = Optional.ofNullable(discountTypeRepo.getByIdEntityGeneric(id,false));
+        Optional<DiscountType> obj = Optional.ofNullable(discountTypeRepo.getByIdEntityGeneric(id,false));
 
-        if (discountType.isPresent()) {
-            result = new ResponseEntity<>(discountType.get(), HttpStatus.OK);
+        if (obj.isPresent()) {
+            result = new ResponseEntity<>(obj.get(), HttpStatus.OK);
         } else {
             result = new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -101,11 +101,11 @@ public class discountTypeController {
      * @param id
      * @return
      */
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteDiscountType(@PathVariable("id") Long id) {
         ResponseEntity<HttpStatus> result;
         try {
-            discountTypeRepo.deleteById(id);
+            discountTypeRepo.markAsDeletedById(id,true,AppUtility.getDeleteStamp());
             result = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             result = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
