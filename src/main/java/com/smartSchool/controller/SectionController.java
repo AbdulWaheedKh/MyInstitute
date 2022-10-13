@@ -1,10 +1,7 @@
 package com.smartSchool.controller;
-
 import com.smartSchool.exceptions.CustomException;
-import com.smartSchool.models.AcademicSessionYear;
-import com.smartSchool.models.AcademicSessionYear;
-import com.smartSchool.repository.AcademicSessionYearRepository;
-
+import com.smartSchool.models.Sections;
+import com.smartSchool.repository.SectionRepository;
 import com.smartSchool.utils.AppUtility;
 import com.smartSchool.utils.DataBaseConstrainst;
 import org.slf4j.Logger;
@@ -18,16 +15,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/academicSessionController")
-public class AcademicYearController {
-
+@RequestMapping("/sectionController")
+public class SectionController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    AcademicSessionYearRepository academicSessionYearRepository;
+    SectionRepository sectionRepository;
 
     /*************************************************************************************
-     *                       CRUD FOR ACADEMICSESSIONS                                   *
+     *                       CRUD FOR Sections                                           *
      *                         13 OCT 2022                                               *
      * ********************************************************************************** /
 
@@ -37,30 +33,30 @@ public class AcademicYearController {
      * @return
      */
     @PostMapping("/")
-    public ResponseEntity<AcademicSessionYear> createAcademicSessionYear(@RequestBody AcademicSessionYear obj) throws CustomException {
-        ResponseEntity<AcademicSessionYear> result;
+    public ResponseEntity<Sections> createSections(@RequestBody Sections obj) throws CustomException {
+        ResponseEntity<Sections> result;
         if(!AppUtility.isEmptyOrNull(obj.getId())){
             throw new CustomException("ID MUST BE NULL");
         }
         try {
             obj.setCreatedDate(AppUtility.getCurrentTimeStamp());
             obj.setModifiedDate(AppUtility.getCurrentTimeStamp());
-            AcademicSessionYear AcademicSessionYearObj = academicSessionYearRepository.save(obj);
-            result = new ResponseEntity<>(AcademicSessionYearObj, HttpStatus.CREATED);
+            Sections SectionsObj = sectionRepository.save(obj);
+            result = new ResponseEntity<>(SectionsObj, HttpStatus.CREATED);
         }
         catch (DataIntegrityViolationException e) {
-            logger.error( "----- Academic Session Post -> " + DataBaseConstrainst.UNIQ);
+            logger.error( "----- Sections Post -> " + DataBaseConstrainst.UNIQ);
             throw new RuntimeException(DataBaseConstrainst.UNIQ);
         }
         catch (Exception e){
-            logger.error( "-----  Academic Session Post SERVER ERROR ---- ");
+            logger.error( "-----  Sections Post SERVER ERROR ---- ");
             result = new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return result;
     }
 
     @PutMapping("/")
-    public ResponseEntity<AcademicSessionYear> updateAcademicSessionYear(@RequestBody AcademicSessionYear obj)
+    public ResponseEntity<Sections> updateSections(@RequestBody Sections obj)
             throws CustomException {
         if (AppUtility.isEmptyOrNull(obj.getId())) {
             throw new CustomException("Id Can not be null");
@@ -69,10 +65,10 @@ public class AcademicYearController {
         } else {
             try {
                 obj.setModifiedDate(AppUtility.getCurrentTimeStamp());
-                obj = academicSessionYearRepository.save(obj);
+                obj = sectionRepository.save(obj);
             }
             catch (DataIntegrityViolationException e) {
-                logger.error( "----- Academic Session put -> " +DataBaseConstrainst.UNIQ);
+                logger.error( "----- Sections put -> " +DataBaseConstrainst.UNIQ);
                 throw new RuntimeException(DataBaseConstrainst.UNIQ);
             }
             catch (Exception e) {
@@ -87,9 +83,9 @@ public class AcademicYearController {
      * @return
      */
     @GetMapping("/{id}")
-    public ResponseEntity<AcademicSessionYear> getAcademicSessionYearById(@PathVariable("id") Long id) {
-        ResponseEntity<AcademicSessionYear> result;
-        Optional<AcademicSessionYear> obj = Optional.ofNullable(academicSessionYearRepository.getByIdEntityGeneric(id,false));
+    public ResponseEntity<Sections> getSectionsById(@PathVariable("id") Long id) {
+        ResponseEntity<Sections> result;
+        Optional<Sections> obj = Optional.ofNullable(sectionRepository.getByIdEntityGeneric(id,false));
 
         if (obj.isPresent()) {
             result = new ResponseEntity<>(obj.get(), HttpStatus.OK);
@@ -104,10 +100,10 @@ public class AcademicYearController {
      * @return
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteAcademicSessionYear(@PathVariable("id") Long id) {
+    public ResponseEntity<HttpStatus> deleteSections(@PathVariable("id") Long id) {
         ResponseEntity<HttpStatus> result;
         try {
-            academicSessionYearRepository.markAsDeletedById(id,true,AppUtility.getDeleteStamp());
+            sectionRepository.markAsDeletedById(id,true,AppUtility.getDeleteStamp());
             result = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             result = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -118,11 +114,11 @@ public class AcademicYearController {
     /**
      * @return
      */
-    @DeleteMapping("/AcademicSessionYears")
-    public ResponseEntity<HttpStatus> deleteAllAcademicSessionYears() {
+    @DeleteMapping("/Sections")
+    public ResponseEntity<HttpStatus> deleteAllSection() {
         ResponseEntity<HttpStatus> result;
         try {
-            academicSessionYearRepository.deleteAll();
+            sectionRepository.deleteAll();
             result = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             result = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
