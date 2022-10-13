@@ -22,8 +22,8 @@ public interface GenericRepository <T extends Object> extends JpaRepository<T, L
 //    @Query("select t from #{#entityName} as t  where  t.institute.id = :id and t.deleted =:isDeleted order by t.modifiedDate Desc")
 //    public List<T> getAllActiveByInstituteIdOrderByModifiedDate(@Param("id") Long id, @Param("isDeleted") boolean isDeleted);
 
-    @Query("select t from #{#entityName} as t where t.id = :id")
-    public T getById(@Param("id") Long id);
+    @Query("select t from #{#entityName} as t where t.id = :id and t.deleted = false")
+    public T getByIdEntityGeneric(@Param("id") Long id, @Param("isDeleted") boolean isDeleted);
 
     @Modifying
     @Query("Update #{#entityName} t set t.deleted = :isDeleted , modifiedDate = CURRENT_TIMESTAMP where t.id =:id")
