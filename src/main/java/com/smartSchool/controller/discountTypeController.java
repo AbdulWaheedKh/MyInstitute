@@ -1,9 +1,10 @@
 package com.smartSchool.controller;
 
 
+import com.smartSchool.businessLogic.commonManager;
 import com.smartSchool.exceptions.CustomException;
 import com.smartSchool.models.DiscountType;
-import com.smartSchool.repository.DiscountTypeRepository;
+import com.smartSchool.repository.*;
 import com.smartSchool.utils.AppUtility;
 import com.smartSchool.utils.DataBaseConstrainst;
 import org.slf4j.Logger;
@@ -14,7 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/discountTypesController")
 public class discountTypeController {
@@ -43,6 +44,9 @@ public class discountTypeController {
         try {
             obj.setCreatedDate(AppUtility.getCurrentTimeStamp());
             obj.setModifiedDate(AppUtility.getCurrentTimeStamp());
+            obj.setAcademicYearId(32L);
+            obj.setInstituteId(32L);
+           // obj.setAca(32L);
             DiscountType discountTypeObj = discountTypeRepo.save(obj);
             result = new ResponseEntity<>(discountTypeObj, HttpStatus.CREATED);
         }
@@ -86,14 +90,14 @@ public class discountTypeController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<DiscountType> getDiscountTypeById(@PathVariable("id") Long id) {
-        ResponseEntity<DiscountType> result;
-        Optional<DiscountType> obj = Optional.ofNullable(discountTypeRepo.getByIdEntityGeneric(id,false));
+        ResponseEntity<DiscountType> result = null;
+        //Optional<DiscountType> obj = Optional.ofNullable(discountTypeRepo.getByIdEntityGeneric(id,false));
 
-        if (obj.isPresent()) {
-            result = new ResponseEntity<>(obj.get(), HttpStatus.OK);
-        } else {
-            result = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+//        if (obj.isPresent()) {
+//            result = new ResponseEntity<>(obj.get(), HttpStatus.OK);
+//        } else {
+//            result = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
         return result;
     }
 
@@ -101,16 +105,33 @@ public class discountTypeController {
      * @param id
      * @return
      */
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<HttpStatus> deleteDiscountType(@PathVariable("id") Long id) {
+//        ResponseEntity<HttpStatus> result;
+//        try {
+//            discountTypeRepo.delById(id);
+//            result = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//        } catch (Exception e) {
+//            result = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//        return result;
+//    }
+
+    @Autowired
+    private commonManager fmController;
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteDiscountType(@PathVariable("id") Long id) {
-        ResponseEntity<HttpStatus> result;
+    public Integer deleteFeeSetup(@PathVariable Long id)
+            throws CustomException {
+
+        Integer count = null;
         try {
-            discountTypeRepo.markAsDeletedById(id,true,AppUtility.getDeleteStamp());
-            result = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            count = fmController.markDiscountTypeAsDeletedById(id);
         } catch (Exception e) {
-            result = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomException(e);
         }
-        return result;
+
+        return count;
     }
 
     /**

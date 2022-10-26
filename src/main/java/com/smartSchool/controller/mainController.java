@@ -4,19 +4,18 @@ import com.smartSchool.models.AcademicSessionYear;
 import com.smartSchool.models.DiscountType;
 import com.smartSchool.models.Sections;
 import com.smartSchool.repository.AcademicSessionYearRepository;
-import com.smartSchool.repository.DiscountTypeRepository;
+import com.smartSchool.repository.*;
 import com.smartSchool.repository.SectionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/institute")
 public class mainController {
@@ -39,7 +38,7 @@ public class mainController {
     public ResponseEntity<List<DiscountType>> findAllByInstituteId(@PathVariable("instituteId") Long instituteId) {
         ResponseEntity<List<DiscountType>> result;
         try {
-            List<DiscountType> discountTypes = discountTypeRepo.getAll(instituteId, false);
+            List<DiscountType> discountTypes = discountTypeRepo.getAllDiscountTypes(instituteId, false);
 
             if (discountTypes.isEmpty()) {
                 result = new ResponseEntity<>(HttpStatus.NO_CONTENT);
