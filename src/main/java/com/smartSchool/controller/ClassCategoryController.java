@@ -1,14 +1,15 @@
 package com.smartSchool.controller;
 
-
-import com.smartSchool.businessLogic.commonManager;
+import com.smartSchool.businessLogic.*;
 import com.smartSchool.exceptions.CustomException;
-import com.smartSchool.models.DiscountType;
+import com.smartSchool.models.ClassCategory;
+import com.smartSchool.models.ClassCategory;
 import com.smartSchool.repository.*;
 import com.smartSchool.utils.AppUtility;
 import com.smartSchool.utils.DataBaseConstrainst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -17,55 +18,52 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/discountTypesController")
-public class discountTypeController {
+@RequestMapping("/classCategoryController")
+public class ClassCategoryController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    DiscountTypeRepository discountTypeRepo;
+    ClassCategoryRepository classCategoryRepository;
 
     @Autowired
     private commonManager manager;
 
-    /*************************************************************************************
-     *                       CRUD FOR DISCOUNT TYPES                                     *
-     *                         13 OCT 2022                                               *
-     * ********************************************************************************** /
-
+/*************************************************************************************
+ *                       CRUD FOR ClassCategory                                      *
+ *                         28 OCT 2022                                               *
+ * ********************************************************************************** */
 
     /**
      * @param obj
      * @return
      */
     @PostMapping("/")
-    public ResponseEntity<DiscountType> createDiscountType(@RequestBody DiscountType obj) throws CustomException {
-        ResponseEntity<DiscountType> result;
+    public ResponseEntity<ClassCategory> createClassCategory(@RequestBody ClassCategory obj) throws CustomException {
+        ResponseEntity<ClassCategory> result;
         if(!AppUtility.isEmptyOrNull(obj.getId())){
             throw new CustomException("ID MUST BE NULL");
         }
         try {
             obj.setCreatedDate(AppUtility.getCurrentTimeStamp());
             obj.setModifiedDate(AppUtility.getCurrentTimeStamp());
-            obj.setAcademicYearId(32L);
             obj.setInstituteId(32L);
-           // obj.setAca(32L);
-            DiscountType discountTypeObj = discountTypeRepo.save(obj);
-            result = new ResponseEntity<>(discountTypeObj, HttpStatus.CREATED);
+            ClassCategory ClassCategoryObj = classCategoryRepository.save(obj);
+            result = new ResponseEntity<>(ClassCategoryObj, HttpStatus.CREATED);
         }
         catch (DataIntegrityViolationException e) {
-            logger.error( "----- Discount Type Post -> " +DataBaseConstrainst.UNIQ);
+            logger.error( "----- ClassCategory  Post -> " + DataBaseConstrainst.UNIQ);
             throw new RuntimeException(DataBaseConstrainst.UNIQ);
         }
         catch (Exception e){
-            logger.error( "-----  Discount Type Post SERVER ERROR ---- ");
+            logger.error( "-----  ClassCategory  Post SERVER ERROR ---- ");
             result = new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return result;
     }
 
     @PutMapping("/")
-    public ResponseEntity<DiscountType> updateDiscountType(@RequestBody DiscountType obj)
+    public ResponseEntity<ClassCategory> updateClassCategory(@RequestBody ClassCategory obj)
             throws CustomException {
         if (AppUtility.isEmptyOrNull(obj.getId())) {
             throw new CustomException("Id Can not be null");
@@ -74,7 +72,7 @@ public class discountTypeController {
         } else {
             try {
                 obj.setModifiedDate(AppUtility.getCurrentTimeStamp());
-                obj = discountTypeRepo.save(obj);
+                obj = classCategoryRepository.save(obj);
             }
             catch (DataIntegrityViolationException e) {
                 logger.error( "----- Discount Type put -> " +DataBaseConstrainst.UNIQ);
@@ -84,17 +82,13 @@ public class discountTypeController {
                 new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-            return ResponseEntity.ok(obj);
+        return ResponseEntity.ok(obj);
     }
 
-    /**
-     * @param id
-     * @return
-     */
     @GetMapping("/{id}")
-    public ResponseEntity<DiscountType> getDiscountTypeById(@PathVariable("id") Long id) {
-        ResponseEntity<DiscountType> result = null;
-        //Optional<DiscountType> obj = Optional.ofNullable(discountTypeRepo.getByIdEntityGeneric(id,false));
+    public ResponseEntity<ClassCategory> getClassCategoryById(@PathVariable("id") Long id) {
+        ResponseEntity<ClassCategory> result = null;
+        //Optional<ClassCategory> obj = Optional.ofNullable(ClassCategoryRepo.getByIdEntityGeneric(id,false));
 
 //        if (obj.isPresent()) {
 //            result = new ResponseEntity<>(obj.get(), HttpStatus.OK);
@@ -104,31 +98,13 @@ public class discountTypeController {
         return result;
     }
 
-    /**
-     * @param id
-     * @return
-     */
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<HttpStatus> deleteDiscountType(@PathVariable("id") Long id) {
-//        ResponseEntity<HttpStatus> result;
-//        try {
-//            discountTypeRepo.delById(id);
-//            result = new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//        } catch (Exception e) {
-//            result = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//        return result;
-//    }
-
-
-
     @DeleteMapping("/{id}")
     public Integer deleteFeeSetup(@PathVariable Long id)
             throws CustomException {
 
         Integer count = null;
         try {
-            count = manager.markDiscountTypeAsDeletedById(id);
+            count = manager.markClassCategoryAsDeletedById(id);
         } catch (Exception e) {
             throw new CustomException(e);
         }
@@ -139,11 +115,11 @@ public class discountTypeController {
     /**
      * @return
      */
-    @DeleteMapping("/discountTypes")
-    public ResponseEntity<HttpStatus> deleteAllDiscountTypes() {
+    @DeleteMapping("/ClassCategorys")
+    public ResponseEntity<HttpStatus> deleteAllClassCategorys() {
         ResponseEntity<HttpStatus> result;
         try {
-            discountTypeRepo.deleteAll();
+            classCategoryRepository.deleteAll();
             result = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             result = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -152,4 +128,5 @@ public class discountTypeController {
         return result;
     }
 
-}
+
+ }

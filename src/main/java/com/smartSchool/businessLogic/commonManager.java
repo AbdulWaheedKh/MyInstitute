@@ -16,8 +16,24 @@ public class commonManager {
     @Autowired
     DiscountTypeRepository discountTypeRepo;
 
+    @Autowired
+    ClassCategoryRepository classCategoryRepository;
+
+    @Autowired
+    StandardClassRepository standardClassRepository;
+
     @Transactional
     public int markDiscountTypeAsDeletedById(Long id)  {
         return discountTypeRepo.delById(id);
+    }
+
+    @Transactional
+    public int markClassCategoryAsDeletedById(Long id)  {
+        return classCategoryRepository.delById(id);
+    }
+
+    @Transactional
+    public int markStandardClassAsDeletedById(Long id)  {
+        return standardClassRepository.delById(id);
     }
 }

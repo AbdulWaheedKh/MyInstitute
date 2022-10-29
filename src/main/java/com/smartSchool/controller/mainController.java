@@ -1,8 +1,6 @@
 package com.smartSchool.controller;
 
-import com.smartSchool.models.AcademicSessionYear;
-import com.smartSchool.models.DiscountType;
-import com.smartSchool.models.Sections;
+import com.smartSchool.models.*;
 import com.smartSchool.repository.AcademicSessionYearRepository;
 import com.smartSchool.repository.*;
 import com.smartSchool.repository.SectionRepository;
@@ -30,6 +28,11 @@ public class mainController {
     @Autowired
     SectionRepository sectionRepository;
 
+    @Autowired
+    ClassCategoryRepository classCategoryRepository;
+
+    @Autowired
+    StandardClassRepository standardClassRepository;
     /**
      * @param instituteId
      * @return findAllByInstituteId dicountTypes
@@ -85,6 +88,48 @@ public class mainController {
                 result = new ResponseEntity<>(HttpStatus.NO_CONTENT);
             } else {
                 result = new ResponseEntity<>(sections, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            result = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * @param instituteId
+     * @return findAllByInstituteId classCategory
+     */
+    @GetMapping("/{instituteId}/ClassCategory")
+    public ResponseEntity<List<ClassCategory>> findAllClassCategoriesByInstituteId(@PathVariable("instituteId") Long instituteId) {
+        ResponseEntity<List<ClassCategory>> result;
+        try {
+            List<ClassCategory> classCategory = classCategoryRepository.getAllClassCategories(instituteId, false);
+
+            if (classCategory.isEmpty()) {
+                result = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } else {
+                result = new ResponseEntity<>(classCategory, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            result = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * @param instituteId
+     * @return findAllByInstituteId classes
+     */
+    @GetMapping("/{instituteId}/StandardClasses")
+    public ResponseEntity<List<StandardClass>> findAllStandardClassesByInstituteId(@PathVariable("instituteId") Long instituteId) {
+        ResponseEntity<List<StandardClass>> result;
+        try {
+            List<StandardClass> classes = standardClassRepository.getAllStandardClasses(instituteId, false);
+
+            if (classes.isEmpty()) {
+                result = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } else {
+                result = new ResponseEntity<>(classes, HttpStatus.OK);
             }
         } catch (Exception e) {
             result = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
